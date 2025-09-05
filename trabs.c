@@ -2,237 +2,318 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <locale.h>
+#include <Windows.h>
+#include <string.h>
 #define MAX 101
 #define TEL 21
-#define TAM 11
+#define CPF 20
 #define SEN 11
+#define FE 10
 //Acho que vou fazer uma locadora de filmes.
-//precisa vender (vinicius soares)
-//precisa ter cadastro de cliente.
+//precisa ter cadastro de cliente também.
+//acho que to maluco
 
-typedef struct Cliente(){
+typedef struct Cliente{
     int id;
     bool status;
     char nome[MAX];
     char telefone[TEL];
     char cpf[CPF];
-    char senha[SEN];
     char endereco[MAX];
-    
+
 } TCliente;
 
 typedef struct Filme {
     int id;
-    bool status; 
-    char faixaEtaria[6];
+    bool status;
+    char faixaEtaria[FE];
     char nome[MAX];
     char categoria[MAX];
     int quantidade;
-    double preco;
+    float preco;
 
 } TFilme;
 
+//função legal para cortar o \n que atrapalha pra comparar string
+void cortaFinal(char *s){
+    if (!s) return;
+    size_t len = strlen(s);
+    if (len > 0 && s[len-1] == '\n') s[len-1] = '\0';
+}
+//Acho que vou criar o atualizaCliente ainda, não sei.
 void cadastraCliente(TCliente *cliente, int pos){
     int i;
-   
+    system("cls");
     cliente[pos].status = true;
+    cliente[pos].id = 0;
     
-    printf("\nCadastro Cliente: ");
-    printf("\n\nNome: ");
+    printf("--Cadastro Cliente--\n\n");
+    printf("Nome: ");
     fgets(cliente[pos].nome, MAX-1, stdin);
     printf("\nTelefone: ");
     fgets(cliente[pos].telefone, TEL-1, stdin);
     printf("\nCPF: ");
     fgets(cliente[pos].cpf, CPF-1, stdin);
-    
-    printf("\nSenha: ");
-    fgets(cliente[pos].senha, SEN -1, stdin);
+    //Cortei o \n
+    cortaFinal(cliente[pos].cpf);
     printf("\nEndereco: ");
     fgets(cliente[pos].endereco, MAX-1, stdin);
     
-    for(i = 0; i < CPF; i++){
-        cliente[pos].id += cliente[pos].cpf[i];
+    //A condição de '\0' significa chegar ao fim do cpf
+    for(i = 0; cliente[pos].cpf[i] != '\0'; i++){
+            if(cliente[pos].cpf[i] >= '0' && cliente[pos].cpf[i] <= '9'){
+                cliente[pos].id += (cliente[pos].cpf[i] - '0'); // conversão marota
+            }
     }
-   
+
     printf("\n\nCadastro realizado com sucesso!");
-    
+    Sleep(500);
+
 }
 
 
 
 void cadastraFilme(TFilme *filme, int pos){
-    
+    system("cls");
     filme[pos].id = pos;
     filme[pos].status = true;
-    
-    printf("Nome do filme: ");
+
+    printf("--Cadastrar filme--\n\nNome do filme: ");
     fgets(filme[pos].nome, MAX - 1, stdin);
-    print("\nCategoria do filme: ");
-    fgets(filme[pos].categoria, stdin);
+    printf("\nCategoria do filme: ");
+    fgets(filme[pos].categoria, MAX-1, stdin);
     printf("\nFaixa Etária: ");
-    fgets(filme[pos].faixaEtaria, 5, stdin);
+    fgets(filme[pos].faixaEtaria, FE-1, stdin);
     printf("\nPreço: ");
-    scanf("%d", &filme[pos].preco);
+    scanf("%f", &filme[pos].preco);
+    getchar();
     printf("\nQuantidade disponível: ");
     scanf("%d", &filme[pos].quantidade);
     getchar();
+
+    printf("\n\nCadastro realizado com sucesso!");
+    Sleep(500);
+
 }
 
-void imprimeMenu(){
-    printf("1-Cadastrar filme\n2-Cadastrar cliente\n3-Pesquisar filme\n4-Exibir lista de filmes\n5-Atulalizar filme\n6-Remover filme\n7-Alugar filme\n8-Sair");
+int imprimeMenu(){
+    system("cls");
+    int op;
+    printf("1-Cadastrar filme\n2-Cadastrar cliente\n3-Pesquisar filme\n4-Exibir lista de filmes\n5-Atualizar filme\n6-Remover filme\n7-Alugar filme\n8-Sair");
+    printf("\n\nOpção: ");
+    scanf("%d", &op);
+    getchar();
+    Sleep(1000);
+    return op;
 }
 void imprimeTodos(TFilme *filme, int n){
-    
+    system("cls");
+    printf("--Lista de filmes--\n\n");
+    int i,j;
+
+    printf("\n---------------------------------------------------\n");
     for(i = 0; i < n; i++){
+        Sleep(500);
         if(filme[i].status == true){
-            printf("ID: %d", filme[i].id);
-            printf("Nome: %s", filme[i].nome);
+            printf("ID: %d\n", filme[i].id);
+            printf("\nNome: %s", filme[i].nome);
             printf("\nCategoria:  %s", filme[i].categoria);
             printf("\nFaixa Etária: %s", filme[i].faixaEtaria);
-            printf("\nPreço: %.2d", filme[i].preco);
+            printf("\nPreço: %.2f\n", filme[i].preco);
             printf("\nQuantidade disponível: %d", filme[i].quantidade);
-        }
+            printf("\n---------------------------------------------------\n");
+            }
     }
+    printf("\n\n");
+    system("pause");
+
 }
 
 void pesquisaFilme(TFilme *filme,int n){
+    system("cls");
     bool encontrado = false;
-    int id,0;
-    printf("Digite o id do filme: ");
+    int id, i;
+    printf("--Pesquisar filme--\n\nDigite o id do filme: ");
     scanf("%d", &id);
     getchar();
     for(i = 0; i < n; i++){
-        if(filme[i].id == id && filme[i].status == true){ 
-            printf("ID: %d", filme[i].id);
-            printf("Nome: %s", filme[i].nome);
+        if(filme[i].id == id && filme[i].status == true){
+            printf("\n\nID: %d", filme[i].id);
+            printf("\nNome: %s", filme[i].nome);
             printf("\nCategoria:  %s", filme[i].categoria);
             printf("\nFaixa Etária: %s", filme[i].faixaEtaria);
-            printf("\nPreço: %.2d", filme[i].preco);
-            printf("\nQuantidade disponível: %d", filme[i].quantidade);
-            
+            printf("\nPreço: %.2f", filme[i].preco);
+            printf("\nQuantidade disponível: %d\n\n", filme[i].quantidade);
+
             encontrado = true;
         }
     }
 
-    if(!encontrado)printf("\nFilme não encontrado!");
-        
+    if(!encontrado)printf("\nFilme não encontrado!\n\n");
+    system("pause");
+
 }
 
 void removerFilme(TFilme *filme, int n){
+    system("cls");
     int id, i;
-    printf("Digite o ID do filme: ");
+    printf("--Remover filme--\n\nDigite o ID do filme: ");
     scanf("%d", &id);
     getchar();
-    if(id < 0 || id >= n || !filme[id].status){
-        printf("ID inválido!");
-        removerFilme(filme, n);
+
+    if(id < 0 || id >= n){
+        printf("\n\nID inválido!");
+        Sleep(1000);
         return;
     }
-        filme[id].status = false;
-        printf("Cadastro de filme apagado!");
+    if(!filme[id].status){
+        printf("\n\nFilme já apagado!");
+        Sleep(1000);
+        return;
+    }
+
+    filme[id].status = false;
+    printf("\nCadastro de filme apagado!");
+    Sleep(1000);
 
 }
 
 void atualizaFilme(TFilme *filme, int n){
-   
-    int id, op,sair;
-    printf("\nDigite o ID do filme: ");
+    system("cls");
+    int id,i, op,sair;
+    printf("\n--Atualizar filme--\n\nDigite o ID do filme: ");
     scanf("%d", &id);
     getchar();
-   
+
     if(id < 0 || id >=n || !filme[id].status){
-        printf("\nID inválido!");
-        atualizaFilme(filme);
+        printf("\n\nID inválido!");
+        atualizaFilme(filme,n);
         return;
     }
-    
-    printf("\nNome: %s", filme[i].nome);
-    
+
+
     do{
     printf("\nAlterar: \n1-Nome\n2-Categoria\n3-Faixa Etária\n4-Preço\n5-Quantidade disponível\nOpção: \n");
     scanf(" %d", &op);
     getchar();
-    
+
     switch(op){
-        
+
         case 1:
             printf("Nome: ");
             fgets(filme[id].nome, MAX-1, stdin);
-            printf("\nNome alterado com sucesso!");
+            printf("\n\nNome alterado com sucesso!");
             break;
-        
+
         case 2:
             printf("Categoria: ");
             fgets(filme[id].categoria, MAX - 1, stdin);
-            printf("\nCategoria alterada com sucesso!");
+            printf("\n\nCategoria alterada com sucesso!");
             break;
-            
+
         case 3:
             printf("Faixa etária: ");
             fgets(filme[id].faixaEtaria, 5, stdin);
-            printf("\nFaixa etária alterada com sucesso!");
+            printf("\n\nFaixa etária alterada com sucesso!");
             break;
-      
+
         case 4:
             printf("Preço: ");
-            scanf("%d", &filme[id].preco);
+            scanf("%f", &filme[id].preco);
             getchar();
-            printf("\nPreço alterado com sucesso!");
+            printf("\n\nPreço alterado com sucesso!");
             break;
 
         case 5:
             printf("Quantidade disponível: ");
             scanf("%d", &filme[id].quantidade);
+            printf("\n\nQuantidade alterada com sucesso!");
+            getchar();
             break;
     }
-        printf("Deseja alterar outro campo? (1-Sim/2-Não)");
+        printf("\n\nDeseja alterar outro campo? (1-Sim/2-Não)\nOpção: ");
         scanf("%d", &sair);
+        getchar();
+        system("cls");
+       
    } while(sair != 2);
-    
+            Sleep(1000);
+
 }
-///////////////////////////////TERMINAR AINDA
-void alugaFilme(TFilme *filme, int n, int m){
-    //tabela hash nessa porra mesmo fodase
+
+void alugaFilme(TFilme *filme, TCliente *cliente, int n, int m){
+    system("cls");
+    
     bool encontrou = false;
-    int i, chave;
+    int i, chave, id;
     char cpf[CPF];
-    printf("Entre com o cpf do cliente: ");
+
+    printf("\n--Alugar filme--\nEntre com o cpf do cliente: ");
     fgets(cpf, CPF-1, stdin);
-    
-    for(i = 0; i < CPF; i++){
-        chave += cpf[i];
+    cortaFinal(cpf);
+    //não tive coragem de ir atrás de tabela hash pra isso
+    //entao só somei cada número do cpf do cliente e chamei de chave
+    chave = 0;
+    for(i = 0; cpf[i] != '\0'; i++){
+        if (cpf[i] >= '0' && cpf[i] <= '9'){
+            chave += (cpf[i] - '0');  // conversão marota char '0'-'9' em int 0-9
+        }
     }
-    
-    for(i = 0; i < n; i++){
+
+    for(i = 0; i < m; i++){
+
         if(cliente[i].id == chave){
-            printf("Cliente encontrado!");
+            printf("\n\nCliente encontrado!");
             encontrou = true;
             break;
         }
     }
-    //ainda falta o aluguel ja que encontrou e dps o !encontrou...
-    
-    if(encontrou){
-        
-        
+   
+
+    if(!encontrou){
+            printf("\n\nCliente não encontrado!");
+            Sleep(1000);
+            return;
+        }
+
+    Sleep(1000);
+    system("cls");
+    printf("--Alugar filme--\n");
+    printf("\nDigite o ID do filme: ");
+    scanf("%d", &id);
+    getchar();
+    if(id < 0 || id >=n || !filme[id].status){
+        printf("\n\nFilme não encontrado!");
+        Sleep(1000);
+        return;
     }
+
+    if(filme[id].quantidade == 0){
+        printf("\n\nSem estoque para esse filme!");
+        Sleep(1000);
+        return;
+    }
+
+    filme[id].quantidade--;
+    printf("\n\nAluguel realizado com sucesso!");
+    printf("\n\nNome: %s", filme[id].nome);
+    printf("\nPreço: %.2f", filme[id].preco);
+    printf("\n\n");
+    system("pause");
 }
-    
-    
+
 int main (){
     setlocale(LC_ALL, "Portuguese");
-    TFilme *filme;
-    TCliente *cliente;
+    TFilme *filme = NULL;
+    TCliente *cliente = NULL;
     int m,n, op;
-    n,m = 0;
-    
+    n = 0,m = 0;
+
     do{
-        imprimeMenu();
-        scanf("%d", &op);
-        getchar();
-        
+        int op = imprimeMenu();
         switch(op){
-            
+
+
         case 1:
             n++;
             if(n == 1){
@@ -241,9 +322,11 @@ int main (){
                 filme = (TFilme *) realloc(filme, n * sizeof(TFilme));
             }
             cadastraFilme(filme, n-1);
+
             break;
-        
+
         case 2:
+
             m++;
             if(m==1){
                 cliente = (TCliente *) malloc(sizeof(TCliente));
@@ -252,56 +335,57 @@ int main (){
             }
             cadastraCliente(cliente,m-1);
             break;
-        
+
         case 3:
             if(n == 0){
-                printf("Não há cadastro de filmes!");
-                return;
+                printf("\n\nNão há filmes cadastrados!");
+               break;
             }
             pesquisaFilme(filme, n);
             break;
-        
+
         case 4:
+
             if(n == 0){
-                printf("Não há cadastro de filmes!");
-                return;
+                printf("\n\nNão há filmes cadastrados!");
+                break;
             }
             imprimeTodos(filme, n);
             break;
-        
+
         case 5:
             if(n == 0){
-                printf("Não há cadastro de filmes!");
-                return;
+                printf("\n\nNão há filmes cadastrados!");
+                break;
             }
             atualizaFilme(filme,n);
             break;
-        
+
         case 6:
             if(n == 0){
-                printf("Não há cadastro de filmes!");
-                return;
+                printf("\n\nNão há filmes cadastrados!");
+                break;
             }
             removerFilme(filme,n);
             break;
-        
+
         case 7:
             if(n == 0){
-                printf("Não há cadastro de filmes!");
-                return;
+                printf("\n\nNão há filmes cadastrados!");
+                break;
             }
-            alugaFilme(filme,n);
+            alugaFilme(filme,cliente,n,m);
             break;
 
         case 8:
-            printf("Operações encerradas!");
+            printf("\n\nOperações encerradas!");
             break;
         default:
-            printf("Opção inválida!");
+            printf("\n\nOpção inválida!");
 
         }
 
-    }
-    
+    }while(op != 8);
+
     return 0;
 }
